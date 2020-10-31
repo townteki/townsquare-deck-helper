@@ -1,0 +1,27 @@
+{
+  "name": "throneteki-deck-helper",
+  "version": "2.2.3",
+  "description": "Deck formatting and validation helpers for throneteki",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "lint": "eslint src/",
+    "test": "npm run lint",
+    "version": "npm run build && git add -A lib"
+  },
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/throneteki/throneteki-deck-helper.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "moment": "^2.22.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.3",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^4.19.1"
+  }
+}
