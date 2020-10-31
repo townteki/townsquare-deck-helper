@@ -1,5 +1,5 @@
 {
-  "name": "throneteki-deck-helper",
+  "name": "townsquare-deck-helper",
   "version": "2.2.3",
   "description": "Deck formatting and validation helpers for throneteki",
   "main": "lib/index.js",
@@ -12,7 +12,7 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/throneteki/throneteki-deck-helper.git"
+    "url": "git+https://github.com/mmeldo/townsquare-deck-helper.git"
   },
   "license": "MIT",
   "dependencies": {
