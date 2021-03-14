@@ -17,7 +17,7 @@ function formatDeckAsFullCards(deck, data) {
     };
 	
     newDeck.outfit = data.cards[deck.outfit.code];
-
+	
     if(deck.legend) {
         newDeck.legend = data.cards[deck.legend.code];
     }
