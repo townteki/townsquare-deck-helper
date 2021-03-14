@@ -1,6 +1,6 @@
 {
   "name": "townsquare-deck-helper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Deck formatting and validation helpers for townsquare",
   "main": "lib/index.js",
   "scripts": {
