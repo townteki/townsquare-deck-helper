@@ -29,7 +29,7 @@ function formatDeckAsFullCards(deck, data) {
 
 function processCardCounts(cardCounts, cardData) {
     let cardCountsWithData = cardCounts.map(cardCount => {
-        return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : cardData[cardCount.card.code] };
+        return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : cardData[cardCount.card.code], starting: cardCount.starting };
     });
 
     // Filter out any cards that aren't available in the card data.
