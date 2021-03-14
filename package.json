@@ -1,7 +1,7 @@
 {
   "name": "townsquare-deck-helper",
   "version": "1.0.0",
-  "description": "Deck formatting and validation helpers for Town Square",
+  "description": "Deck formatting and validation helpers for townsquare",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
