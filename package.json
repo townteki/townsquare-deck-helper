@@ -1,7 +1,7 @@
 {
   "name": "townsquare-deck-helper",
-  "version": "2.2.3",
-  "description": "Deck formatting and validation helpers for throneteki",
+  "version": "1.0.0",
+  "description": "Deck formatting and validation helpers for Town Square",
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
@@ -9,7 +9,7 @@
     "test": "npm run lint",
     "version": "npm run build && git add -A lib"
   },
-  "author": "",
+  "author": "mmeldo",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mmeldo/townsquare-deck-helper.git"
@@ -23,5 +23,17 @@
     "babel-eslint": "^8.2.3",
     "babel-preset-env": "^1.7.0",
     "eslint": "^4.19.1"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/mmeldo/townsquare-deck-helper/issues"
+  },
+  "homepage": "https://github.com/mmeldo/townsquare-deck-helper#readme",
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [
+    "townsquare",
+    "deck",
+    "helper"
+  ]
 }
