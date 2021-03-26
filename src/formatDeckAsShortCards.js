@@ -22,7 +22,7 @@ function formatDeckAsShortCards(deck) {
 
 function formatCards(cardCounts) {
     return cardCounts.map(cardCount => {
-        return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : { code: cardCount.card.code } };
+        return { count: cardCount.count, card: cardCount.card.custom ? cardCount.card : { code: cardCount.card.code }, starting: cardCount.starting };
     });
 }
 
