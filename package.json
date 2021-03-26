@@ -1,6 +1,6 @@
 {
   "name": "townsquare-deck-helper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Deck formatting and validation helpers for townsquare",
   "main": "lib/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "author": "mmeldo",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mmeldo/townsquare-deck-helper.git"
+    "url": "git+https://github.com/townteki/townsquare-deck-helper.git"
   },
   "license": "MIT",
   "dependencies": {
@@ -25,9 +25,9 @@
     "eslint": "^4.19.1"
   },
   "bugs": {
-    "url": "https://github.com/mmeldo/townsquare-deck-helper/issues"
+    "url": "https://github.com/townteki/townsquare-deck-helper/issues"
   },
-  "homepage": "https://github.com/mmeldo/townsquare-deck-helper#readme",
+  "homepage": "https://github.com/townteki/townsquare-deck-helper#readme",
   "directories": {
     "lib": "lib"
   },
