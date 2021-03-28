@@ -1,10 +1,23 @@
 const moment = require('moment');
 
-function getDeckCount(deck) {
-    let count = 0;
+const RestrictedList = require('./RestrictedList');
+
+function getDeckCounts(deck) {
+    let count = {
+        drawCount: 0,
+        jokerCount: 0,
+        startingCount: 0
+    };
 
     for(const cardEntry of deck) {
-        count += cardEntry.count;
+        if(cardEntry.card.type_code === 'joker') {
+            count.jokerCount += cardEntry.count;
+            continue;
+        }
+        if(cardEntry.starting) {
+            count.startingCount += 1;
+        }
+        count.drawCount += cardEntry.count;
     }
 
     return count;
@@ -12,14 +25,14 @@ function getDeckCount(deck) {
 
 function isCardInReleasedPack(packs, card) {
     let pack = packs.find(pack => {
-        return card.packCode === pack.code;
+        return card.pack_code === pack.code;
     });
 
     if(!pack) {
         return false;
     }
 
-    let releaseDate = pack.releaseDate;
+    let releaseDate = pack.available || pack.date_release;
 
     if(!releaseDate) {
         return false;
@@ -34,18 +47,25 @@ function isCardInReleasedPack(packs, card) {
 const legendRules = {};
 
 class DeckValidator {
-    constructor(packs) {
+    constructor(packs, restrictedListRules) {
         this.packs = packs;
+        this.restrictedLists = restrictedListRules.map(rl => new RestrictedList(rl));
     }
 
     validateDeck(deck) {
         let errors = [];
         let unreleasedCards = [];
         let rules = this.getRules(deck);
-        let drawCount = getDeckCount(deck.drawCards);
+        let { drawCount, jokerCount, startingCount } = getDeckCounts(deck.drawCards);
 
-        if(drawCount < rules.requiredDraw) {
-            errors.push('Too few draw cards');
+        if(drawCount !== rules.requiredDraw) {
+            errors.push(drawCount + ' cards with printed value (required 52)');
+        }
+        if(jokerCount > rules.maxJokerCount) {
+            errors.push('Too many Joker cards');
+        }
+        if(startingCount > rules.maxStartingCount) {
+            errors.push('Too many cards in starting posse');
         }
 
         for(const rule of rules.rules) {
@@ -55,35 +75,44 @@ class DeckValidator {
         }
 
         let allCards = deck.drawCards;
-        let cardCountByName = {};
+        let cardCountByValue = {};
 
         for(let cardQuantity of allCards) {
-            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, type: cardQuantity.card.type, limit: cardQuantity.card.deckLimit, count: 0 };
-            cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
+            cardCountByValue[cardQuantity.card.value] = cardCountByValue[cardQuantity.card.value] || { value: cardQuantity.card.value, count: 0 };
+            cardCountByValue[cardQuantity.card.value].count += cardQuantity.count;
             if(!isCardInReleasedPack(this.packs, cardQuantity.card)) {
                 unreleasedCards.push(cardQuantity.card.title + ' is not yet released');
             }			
         }
 
-        for(const card of Object.values(cardCountByName)) {
-            if(card.count > card.limit) {
-                errors.push(card.name + ' has limit ' + card.limit);
+        for(const card of Object.values(cardCountByValue)) {
+            if(card.count > 4) {
+                errors.push('Too many cards with same value: ' + card.value);
             }
         }
 
-        let isValid = errors.length === 0;
+        let uniqueCards = allCards.map(cardQuantity => cardQuantity.card);
+        let restrictedListResults = this.restrictedLists.map(restrictedList => restrictedList.validate(uniqueCards));
+        let officialRestrictedResult = restrictedListResults[0];
+
+        const restrictedListErrors = restrictedListResults.reduce((errors, result) => errors.concat(result.errors), []);
 
         return {
-            status: !isValid ? 'Invalid' : (unreleasedCards.length === 0 ? 'Valid' : 'Unreleased Cards'),
+            basicRules: errors.length === 0,
+            noBannedCards: officialRestrictedResult.noBannedCards,
+            restrictedLists: restrictedListResults,
+            noUnreleasedCards: true,
             drawCount: drawCount,
-            extendedStatus: errors.concat(unreleasedCards),
-            isValid: isValid
+            extendedStatus: 
+			errors.concat(unreleasedCards).concat(restrictedListErrors)	
         };
     }
 
     getRules(deck) {
         const standardRules = {
-            requiredDraw: 52
+            requiredDraw: 52,
+            maxJokerCount: 2,
+            maxStartingCount: 5
         };
         let outfitRules = this.getOutfitRules();
         let legendRules = this.getLegendRules(deck);
