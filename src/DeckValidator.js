@@ -6,7 +6,8 @@ function getDeckCounts(deck) {
     let count = {
         drawCount: 0,
         jokerCount: 0,
-        startingCount: 0
+        startingCount: 0,
+        startingCost: 0
     };
 
     for(const cardEntry of deck) {
@@ -15,12 +16,27 @@ function getDeckCounts(deck) {
             continue;
         }
         if(cardEntry.starting) {
-            count.startingCount += 1;
+            var startingCount = cardEntry.starting;
+            // Xiaodan Li - does not count towards limit
+            if(cardEntry.card.code === '09006') {
+                startingCount = 0;
+            }
+            // Harvester - counts as 3 dudes
+            if(cardEntry.card.code === '16005') {
+                startingCount = cardEntry.starting * 3;
+            }
+            count.startingCount += startingCount;
+            count.startingCost += cardEntry.card.cost * cardEntry.starting;
         }
         count.drawCount += cardEntry.count;
     }
 
     return count;
+}
+
+function getKeywords(card) {
+    var keywordArray = card.keywords.split('\u2022');
+    return keywordArray.map(keyword => keyword.trim().toLowerCase());
 }
 
 function isCardInReleasedPack(packs, card) {
@@ -56,7 +72,7 @@ class DeckValidator {
         let errors = [];
         let unreleasedCards = [];
         let rules = this.getRules(deck);
-        let { drawCount, jokerCount, startingCount } = getDeckCounts(deck.drawCards);
+        let { drawCount, jokerCount, startingCount, startingCost } = getDeckCounts(deck.drawCards);
 
         if(drawCount !== rules.requiredDraw) {
             errors.push(drawCount + ' cards with printed value (required 52)');
@@ -66,6 +82,9 @@ class DeckValidator {
         }
         if(startingCount > rules.maxStartingCount) {
             errors.push('Too many cards in starting posse');
+        }
+        if(deck.outfit && startingCost > deck.outfit.wealth) {
+            errors.push('Negative starting Ghost Rock');
         }
 
         for(const rule of rules.rules) {
@@ -82,7 +101,19 @@ class DeckValidator {
             cardCountByValue[cardQuantity.card.value].count += cardQuantity.count;
             if(!isCardInReleasedPack(this.packs, cardQuantity.card)) {
                 unreleasedCards.push(cardQuantity.card.title + ' is not yet released');
-            }			
+            }
+            if(cardQuantity.count < cardQuantity.starting) {
+                errors.push('Starting count for a card ' + cardQuantity.card.title + ' is greater than its count');
+            }
+            if(cardQuantity.starting) {
+                var keywords = getKeywords(cardQuantity.card);
+                if(cardQuantity.starting > 1 && !keywords.find(keyword => keyword === 'non-unique')) {
+                    errors.push('Starting multiple copies of unique card ' + cardQuantity.card.title);
+                }
+                if(cardQuantity.card.type_code === 'deed' && !keywords.find(keyword => keyword === 'core')) {
+                    errors.push('Starting non-core deed ' + cardQuantity.card.title);
+                }
+            }
         }
 
         for(const card of Object.values(cardCountByValue)) {
