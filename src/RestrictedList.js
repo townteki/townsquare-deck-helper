@@ -5,7 +5,10 @@ class RestrictedList {
 
     // Not sure if we really need restricted rules. Keeping here for future
     validate(cards) {
-        let restrictedCardsOnList = cards.filter(card => this.rules.restricted && this.rules.restricted.includes(card.code));
+        let restrictedCardsOnList = cards.filter(card => this.rules.restricted && 
+            (this.rules.restricted.includes(card.code) ||
+            this.rules.restrictedFrom <= card.code ||
+            this.rules.restrictedUpTo >= card.code));
         let bannedCardsOnList = cards.filter(card => this.rules.banned.includes(card.code));
         let noBannedCards = true;
 

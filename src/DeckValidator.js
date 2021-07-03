@@ -130,6 +130,7 @@ class DeckValidator {
 
         return {
             basicRules: errors.length === 0,
+            restrictedRules: officialRestrictedResult.restrictedRules,
             noBannedCards: officialRestrictedResult.noBannedCards,
             restrictedLists: restrictedListResults,
             noUnreleasedCards: true,
