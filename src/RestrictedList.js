@@ -4,10 +4,24 @@ class RestrictedList {
     }
 
     isCardRestricted(card) {
-        return this.rules.restricted && 
-        (this.rules.restricted.includes(card.code) ||
-        this.rules.restrictedFrom <= card.code ||
-        this.rules.restrictedUpTo >= card.code);
+        if(this.rules.restricted && this.rules.restricted.includes(card.code)) {
+            return true;
+        }
+        var isRestricted = false;
+        if(this.rules.restrictedFrom && this.rules.restrictedFrom <= card.code) {
+            isRestricted = true; 
+        }
+        if(this.rules.restrictedUpTo) {
+            if(this.rules.restrictedUpTo >= card.code) {
+                isRestricted = true; 
+            } else {
+                isRestricted = false;
+            }
+        }
+        if(this.rules.restrictedExceptions && this.rules.restrictedExceptions.includes(card.code)) {
+            isRestricted = false;
+        }
+        return isRestricted;
     }
 
     validate(cards) {

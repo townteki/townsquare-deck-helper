@@ -25,6 +25,10 @@ function getDeckCounts(deck) {
             if(cardEntry.card.code === '16005') {
                 startingCount = cardEntry.starting * 3;
             }
+            var keywords = getKeywords(cardEntry.card);
+            if(keywords.find(keyword => keyword === 'core')) {
+                count.startingCoreCount += startingCount;
+            }
             count.startingCount += startingCount;
             count.startingCost += cardEntry.card.cost * cardEntry.starting;
         }
@@ -72,7 +76,7 @@ class DeckValidator {
         let errors = [];
         let unreleasedCards = [];
         let rules = this.getRules(deck);
-        let { drawCount, jokerCount, startingCount, startingCost } = getDeckCounts(deck.drawCards);
+        let { drawCount, jokerCount, startingCount, startingCoreCount, startingCost } = getDeckCounts(deck.drawCards);
 
         if(drawCount !== rules.requiredDraw) {
             errors.push(drawCount + ' cards with printed value (required 52)');
@@ -80,8 +84,17 @@ class DeckValidator {
         if(jokerCount > rules.maxJokerCount) {
             errors.push('Too many Joker cards');
         }
-        if(startingCount > rules.maxStartingCount) {
-            errors.push('Too many cards in starting posse');
+        if(this.restrictedLists[0].rules.cardSet === 'new') {
+            if(startingCount > rules.maxStartingCount + rules.maxStartingCoreCount) {
+                errors.push('Too many cards in starting posse');
+            }
+        } else {
+            if(startingCount > rules.maxStartingCount) {
+                errors.push('Too many cards in starting posse');
+            }            
+        }
+        if(startingCoreCount > rules.maxStartingCoreCount) {
+            errors.push('Too many Core deeds in starting posse');
         }
         if(deck.outfit && startingCost > deck.outfit.wealth) {
             errors.push('Negative starting Ghost Rock');
@@ -144,7 +157,8 @@ class DeckValidator {
         const standardRules = {
             requiredDraw: 52,
             maxJokerCount: 2,
-            maxStartingCount: 5
+            maxStartingCount: 5,
+            maxStartingCoreCount: 1
         };
         let outfitRules = this.getOutfitRules();
         let legendRules = this.getLegendRules(deck);
