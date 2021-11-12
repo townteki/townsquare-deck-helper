@@ -84,14 +84,8 @@ class DeckValidator {
         if(jokerCount > rules.maxJokerCount) {
             errors.push('Too many Joker cards');
         }
-        if(this.restrictedLists[0].rules.cardSet === 'new') {
-            if(startingCount > rules.maxStartingCount + rules.maxStartingCoreCount) {
-                errors.push('Too many cards in starting posse');
-            }
-        } else {
-            if(startingCount > rules.maxStartingCount) {
-                errors.push('Too many cards in starting posse');
-            }            
+        if(startingCount > rules.maxStartingCount + rules.maxStartingCoreCount) {
+            errors.push('Too many cards in starting posse');
         }
         if(startingCoreCount > rules.maxStartingCoreCount) {
             errors.push('Too many Core deeds in starting posse');
