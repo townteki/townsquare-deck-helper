@@ -43,7 +43,7 @@ class RestrictedList {
         return {
             name: this.rules.name,
             valid: errors.length === 0,
-            restrictedRules: restrictedCardsOnList.length <= 1,
+            restrictedRules: restrictedCardsOnList.length === 0,
             noBannedCards: noBannedCards,
             errors: errors,
             restrictedCards: restrictedCardsOnList,
